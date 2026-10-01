@@ -5,8 +5,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "learning-evidence-core"
 version = "0.1.0"
-description = "Small public proof extracted from a larger private system."
+description = "Evidence rules that keep assisted practice, independent performance, spacing, and durable mastery distinct."
 requires-python = ">=3.10"
+license = { text = "MIT" }
+keywords = ["learning","mastery","evidence","spaced-practice","education"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
