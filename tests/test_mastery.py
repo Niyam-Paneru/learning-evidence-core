@@ -35,6 +35,52 @@ class MasteryTests(unittest.TestCase):
             Mastery.DURABLE,
         )
 
+    def test_configured_three_successes_require_spacing_between_counted_successes(self):
+        attempts = [
+            Attempt("pointers", BASE, correct=True),
+            Attempt("pointers", BASE + timedelta(hours=2), correct=True),
+            Attempt("pointers", BASE + timedelta(days=2), correct=True),
+        ]
+        self.assertEqual(
+            mastery_for(
+                "pointers",
+                attempts,
+                now=BASE + timedelta(days=3),
+                min_independent_successes=3,
+                min_spacing=timedelta(days=1),
+            ),
+            Mastery.QUALIFIED,
+        )
+
+    def test_configured_three_spaced_successes_become_durable(self):
+        attempts = [
+            Attempt("pointers", BASE, correct=True),
+            Attempt("pointers", BASE + timedelta(days=1), correct=True),
+            Attempt("pointers", BASE + timedelta(days=2), correct=True),
+        ]
+        self.assertEqual(
+            mastery_for(
+                "pointers",
+                attempts,
+                now=BASE + timedelta(days=3),
+                min_independent_successes=3,
+                min_spacing=timedelta(days=1),
+            ),
+            Mastery.DURABLE,
+        )
+
+    def test_invalid_thresholds_are_rejected(self):
+        attempts = [Attempt("pointers", BASE, correct=True)]
+
+        with self.assertRaisesRegex(ValueError, "min_independent_successes"):
+            mastery_for("pointers", attempts, min_independent_successes=0)
+
+        with self.assertRaisesRegex(ValueError, "min_spacing"):
+            mastery_for("pointers", attempts, min_spacing=timedelta(seconds=-1))
+
+        with self.assertRaisesRegex(ValueError, "refresh_after"):
+            mastery_for("pointers", attempts, refresh_after=timedelta(seconds=-1))
+
     def test_old_mastery_becomes_refresh_due(self):
         attempts = [
             Attempt("pointers", BASE, correct=True),
