@@ -6,9 +6,15 @@ build-backend = "setuptools.build_meta"
 name = "learning-evidence-core"
 version = "0.1.0"
 description = "Evidence rules that keep assisted practice, independent performance, spacing, and durable mastery distinct."
+readme = "README.md"
+authors = [{ name = "Niyam Paneru" }]
 requires-python = ">=3.10"
 license = { text = "MIT" }
 keywords = ["learning","mastery","evidence","spaced-practice","education"]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[project.urls]
+Homepage = "https://github.com/Niyam-Paneru/learning-evidence-core"
+Source = "https://github.com/Niyam-Paneru/learning-evidence-core"
