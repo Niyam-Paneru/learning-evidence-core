@@ -2,46 +2,44 @@
 
 **Watching three tutorials is not a black belt.**
 
-This repo is a public, sanitized slice of the evidence logic behind my Learning OS work. The core idea is boring on purpose: practice is useful, help is useful, projects are useful — but none of them should quietly masquerade as independent mastery.
+This is the public evidence slice from my Learning OS work.
 
-## Flow
+The core idea is deliberately unfancy: **helped practice is useful, but it is not the same evidence as independent performance.**
 
-```mermaid
-flowchart LR
-    A[Attempt] --> B{How much help?}
-    B -->|material help| P[Practice evidence]
-    B -->|independent| Q[Qualifying evidence]
-    P --> N[Plan next session]
-    Q --> C{Repeated + spaced?}
-    C -->|no| N
-    C -->|yes| M[Durable mastery]
-    M --> R{Too old?}
-    R -->|yes| F[Refresh due]
-    R -->|no| N
-```
+![Learning evidence workflow](docs/workflow.svg)
 
-The system is allowed to say: *“Nice work. That was assisted, so it counts as practice.”*
+## What the system refuses to fake
 
-That is more useful than handing out imaginary XP until the dashboard looks confident.
+A learner can:
 
-## What this proves
+- finish something with hints;
+- finish a project with heavy help;
+- answer correctly twice in five minutes;
+- have genuinely learned something months ago and now need a refresh.
 
-- assisted practice and independent evidence are separate;
-- project completion does not auto-promote prerequisite skills;
-- mastery requires repeated independent evidence;
-- durable evidence needs spacing;
-- old mastery can become refresh-due without pretending it was never learned.
+Those are different states.
 
-## Run
+The code keeps them different instead of pouring everything into one shiny “mastery score.”
 
-```bash
-PYTHONPATH=src python -m unittest discover -s tests
-```
+## Repo map
 
-## Boundary
+| Area | Responsibility |
+|---|---|
+| `models.py` | attempts, evidence kind, mastery states |
+| `evidence.py` | classify assisted vs independent evidence |
+| `mastery.py` | repeated + spaced mastery logic |
+| `core.py` | stable facade |
+| `tests/` | evidence and retention behavior |
+| `docs/` | design choices and workflow |
 
-No private learner history, voice recordings, provider keys, browser storage, or personal course data is included.
+## Why I built it this way
 
-## Provenance
+A learning product can accidentally reward the dashboard instead of the learner.
 
-Rewritten from the evidence/mastery rules used in my private Learning OS repository and its recent RS-1 / AI / pointer-learning work.
+If the system promotes every assisted success to “mastered,” the numbers improve while the learner's actual independence does not.
+
+That is a very efficient way to build a beautiful lie.
+
+The private Learning OS adds exercises, RS-1 decisions, C/Python/AI labs, persistence, and session planning. This repo keeps only the part that decides what the evidence actually means.
+
+> XP is allowed to be fun. Evidence should still tell the truth.
