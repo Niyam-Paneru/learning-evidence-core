@@ -15,8 +15,8 @@ It does not try to be a learning platform. It answers one narrower question: **w
 | No attempts | `unseen` |
 | Attempts, but no correct independent success | `practice` |
 | At least one correct independent success | `qualified` |
-| Enough independent successes with enough spacing | `durable` |
-| Durable evidence whose latest qualifying success is too old | `refresh_due` |
+| Enough independent successes satisfying the configured spacing | `durable` |
+| Durable evidence whose latest counted success is too old | `refresh_due` |
 
 The current defaults in `src/learning_evidence/mastery.py` are:
 
@@ -24,7 +24,7 @@ The current defaults in `src/learning_evidence/mastery.py` are:
 - `min_spacing = 1 day`
 - `refresh_after = 30 days`
 
-These are **configurable software rules**, not scientifically validated universal thresholds for human learning.
+These are **configurable software rules**, not scientifically validated universal thresholds for human learning. When more than two successes are required, each success counted toward durability must be at least `min_spacing` after the previous counted success. Invalid negative/zero threshold configurations are rejected where they would make the rule nonsensical.
 
 ## Concrete example
 
@@ -42,18 +42,19 @@ Assistance still counts as practice evidence. It just does not silently become p
 ## Other boundaries enforced by the module
 
 - `help_level > 0` classifies an attempt as practice evidence.
-- A correct independent attempt is qualifying evidence.
+- A correct independent attempt can count toward mastery.
 - Evidence is filtered by skill, so success in one skill cannot promote another.
 - An assisted project completion does not auto-promote the underlying skill.
 - Attempt timestamps must be timezone-aware and `help_level` cannot be negative.
+- Threshold inputs are validated before state derivation.
 
 ## Inspect the implementation
 
 - [`src/learning_evidence/models.py`](src/learning_evidence/models.py) — attempt validation and evidence/mastery enums
 - [`src/learning_evidence/evidence.py`](src/learning_evidence/evidence.py) — evidence classification and project-promotion boundary
-- [`src/learning_evidence/mastery.py`](src/learning_evidence/mastery.py) — state derivation and configurable thresholds
+- [`src/learning_evidence/mastery.py`](src/learning_evidence/mastery.py) — state derivation, spacing selection, and threshold validation
 - [`tests/test_core.py`](tests/test_core.py) — end-to-end learning-state journey
-- [`tests/test_mastery.py`](tests/test_mastery.py) — repetition, spacing, and refresh behavior
+- [`tests/test_mastery.py`](tests/test_mastery.py) — repetition, configurable spacing, refresh, and invalid-threshold behavior
 
 ## Verify
 
