@@ -42,4 +42,6 @@ That is a very efficient way to build a beautiful lie.
 
 The private Learning OS adds exercises, RS-1 decisions, C/Python/AI labs, persistence, and session planning. This repo keeps only the part that decides what the evidence actually means.
 
+Want to inspect how the labels earn their names? Read the [invariants](docs/invariants.md), [failure modes](docs/failure-modes.md), [design decisions](docs/decisions.md), and [provenance](PROVENANCE.md).
+
 > XP is allowed to be fun. Evidence should still tell the truth.
