@@ -45,3 +45,12 @@ The private Learning OS adds exercises, RS-1 decisions, C/Python/AI labs, persis
 Want to inspect how the labels earn their names? Read the [invariants](docs/invariants.md), [failure modes](docs/failure-modes.md), [design decisions](docs/decisions.md), and [provenance](PROVENANCE.md).
 
 > XP is allowed to be fun. Evidence should still tell the truth.
+
+## Inspect deeper
+
+- [Design overview](docs/overview.md)
+- [Why the design looks this way](docs/decisions.md)
+- [How it fails on purpose](docs/failure-modes.md)
+- [Security / privacy boundary](SECURITY.md)
+
+The README is the front door. The interesting arguments are in those files.
