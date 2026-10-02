@@ -1,58 +1,69 @@
 # Learning Evidence Core
 
-**Watching three tutorials is not a black belt.**
+A small deterministic Python module for keeping **assisted practice**, **independent evidence**, and **mastery state** separate.
 
-This is the public evidence slice from my Learning OS work.
+It does not try to be a learning platform. It answers one narrower question: **what does the recorded evidence justify saying right now?**
 
-The core idea is deliberately unfancy: **helped practice is useful, but it is not the same evidence as independent performance.**
+![Mastery evidence timeline](docs/workflow.svg)
 
-![Learning evidence workflow](docs/workflow.svg)
+## State rules
 
-## What the system refuses to fake
+`mastery_for()` evaluates attempts for one skill at a time.
 
-A learner can:
-
-- finish something with hints;
-- finish a project with heavy help;
-- answer correctly twice in five minutes;
-- have genuinely learned something months ago and now need a refresh.
-
-Those are different states.
-
-The code keeps them different instead of pouring everything into one shiny “mastery score.”
-
-## Repo map
-
-| Area | Responsibility |
+| Evidence seen | State |
 |---|---|
-| `models.py` | attempts, evidence kind, mastery states |
-| `evidence.py` | classify assisted vs independent evidence |
-| `mastery.py` | repeated + spaced mastery logic |
-| `core.py` | stable facade |
-| `tests/` | evidence and retention behavior |
-| `docs/` | design choices and workflow |
+| No attempts | `unseen` |
+| Attempts, but no correct independent success | `practice` |
+| At least one correct independent success | `qualified` |
+| Enough independent successes satisfying the configured spacing | `durable` |
+| Durable evidence whose latest independent success is too old | `refresh_due` |
 
-## Why I built it this way
+The current defaults in `src/learning_evidence/mastery.py` are:
 
-A learning product can accidentally reward the dashboard instead of the learner.
+- `min_independent_successes = 2`
+- `min_spacing = 1 day`
+- `refresh_after = 30 days`
 
-If the system promotes every assisted success to “mastered,” the numbers improve while the learner's actual independence does not.
+These are **configurable software rules**, not scientifically validated universal thresholds for human learning. When more than two successes are required, each success counted toward durability must be at least `min_spacing` after the previous counted success. Once durability exists, a later correct independent success refreshes the recency clock even if durability had already been established. Invalid negative/zero threshold configurations are rejected where they would make the rule nonsensical.
 
-That is a very efficient way to build a beautiful lie.
+## Concrete example
 
-The private Learning OS adds exercises, RS-1 decisions, C/Python/AI labs, persistence, and session planning. This repo keeps only the part that decides what the evidence actually means.
+Using the defaults above for one skill:
 
-Want to inspect how the labels earn their names? Read the [invariants](docs/invariants.md), [failure modes](docs/failure-modes.md), [design decisions](docs/decisions.md), and [provenance](PROVENANCE.md).
+| Time | Attempt | Resulting state |
+|---|---|---|
+| 2026-01-01 | Correct with help | `practice` |
+| 2026-01-02 | First correct independent attempt | `qualified` |
+| 2026-01-04 | Second correct independent attempt, spaced by 2 days | `durable` |
+| 2026-02-10 | No new qualifying attempt; 37 days since the latest one | `refresh_due` |
 
-> XP is allowed to be fun. Evidence should still tell the truth.
+Assistance still counts as practice evidence. It just does not silently become proof of independent performance.
 
-## Inspect deeper
+## Other boundaries enforced by the module
 
-- [Design overview](docs/overview.md)
-- [Why the design looks this way](docs/decisions.md)
-- [Invariants that must survive refactors](docs/invariants.md)
-- [How it fails on purpose](docs/failure-modes.md)
-- [Security / privacy boundary](SECURITY.md)
-- [Where this public slice came from](PROVENANCE.md)
+- `help_level > 0` classifies an attempt as practice evidence.
+- A correct independent attempt can count toward mastery.
+- Evidence is filtered by skill, so success in one skill cannot promote another.
+- An assisted project completion does not auto-promote the underlying skill.
+- Attempt timestamps must be timezone-aware and `help_level` cannot be negative.
+- Threshold inputs are validated before state derivation.
 
-The README is the front door. The interesting arguments are in those files.
+## Inspect the implementation
+
+- [`src/learning_evidence/models.py`](src/learning_evidence/models.py) — attempt validation and evidence/mastery enums
+- [`src/learning_evidence/evidence.py`](src/learning_evidence/evidence.py) — evidence classification and project-promotion boundary
+- [`src/learning_evidence/mastery.py`](src/learning_evidence/mastery.py) — state derivation, spacing selection, and threshold validation
+- [`tests/test_core.py`](tests/test_core.py) — end-to-end learning-state journey
+- [`tests/test_mastery.py`](tests/test_mastery.py) — repetition, configurable spacing, refresh, and invalid-threshold behavior
+
+## Verify
+
+```bash
+PYTHONPATH=src python -m unittest discover -s tests
+```
+
+The CircleCI config runs the same behavior suite after compiling `src/` and checking the public proof files. A CI configuration existing in the repo is not the same thing as a published passing status; check the current commit status on GitHub when judging CI.
+
+## Scope and provenance
+
+This repository is a public extraction of evidence/mastery rules from private Learning OS work. It intentionally excludes learner history, exercises, personal progress, UI state, recordings, and provider integrations. See [`PROVENANCE.md`](PROVENANCE.md) and [`SECURITY.md`](SECURITY.md) for those boundaries.
