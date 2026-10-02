@@ -2,21 +2,44 @@
 
 A small deterministic Python module that keeps **assisted practice**, **independent evidence**, and **mastery state** separate.
 
-It answers one narrow question: **what does the recorded evidence justify saying about this skill right now?**
+**Assisted practice does not get a fake moustache and pass as independent evidence.**
+
+This public sample comes from my private Learning OS work. It shows how recorded evidence determines a skill's current state. I can adapt the rules and build the surrounding learning applications, practice workflows, and progress tracking.
+
+## Evidence: start with the attempts for one skill
 
 ```mermaid
-stateDiagram-v2
-    [*] --> unseen
-    unseen --> practice: attempts, but no correct independent success
-    unseen --> qualified: first correct independent success
-    practice --> qualified: correct independent success
-    qualified --> durable: enough spaced independent successes
-    durable --> refresh_due: latest independent success ages past refresh_after
-    durable --> durable: later independent success refreshes recency
-    refresh_due --> durable: later independent success refreshes recency
+flowchart LR
+    A{"Any attempts?"} -- No --> U["<b>unseen</b>"]
+    A -- Yes --> S{"Independent success?"}
+    S -- No --> P["<b>practice</b>"]
+    S -- Yes --> Q["<b>Check durability</b><br/>Spacing + recency"]
+    classDef input fill:#e8e6df,stroke:#55534a,color:#20201d,stroke-width:2px;
+    classDef pass fill:#d2e5d8,stroke:#38734d,color:#183923,stroke-width:2px;
+    class A,S,U,P input;
+    class Q pass;
 ```
 
-Assistance still counts as practice; it just does not get a fake moustache and pass as independent evidence.
+Success must be correct and independent. Assisted attempts still count as practice, and evidence from another skill does not enter this calculation.
+
+## Durability: count spaced successes, then check recency
+
+The configured count and spacing determine durability. Once enough spaced successes exist, the latest correct independent success sets the refresh clock, including later successes that were not needed to establish durability.
+
+```mermaid
+flowchart LR
+    A["<b>Independent successes</b>"] --> S{"Spaced enough?"}
+    S -- No --> Q["<b>qualified</b>"]
+    S -- Yes --> R{"Recent enough?"}
+    R -- Yes --> D["<b>durable</b>"]
+    R -- No --> F["<b>refresh_due</b>"]
+    classDef input fill:#e8e6df,stroke:#55534a,color:#20201d,stroke-width:2px;
+    classDef pass fill:#d2e5d8,stroke:#38734d,color:#183923,stroke-width:2px;
+    classDef stop fill:#f4dadd,stroke:#b14253,color:#611c29,stroke-width:2px;
+    class A,S,R,Q input;
+    class D pass;
+    class F stop;
+```
 
 ## State rules
 
