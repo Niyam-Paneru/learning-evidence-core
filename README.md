@@ -16,7 +16,7 @@ It does not try to be a learning platform. It answers one narrower question: **w
 | Attempts, but no correct independent success | `practice` |
 | At least one correct independent success | `qualified` |
 | Enough independent successes satisfying the configured spacing | `durable` |
-| Durable evidence whose latest counted success is too old | `refresh_due` |
+| Durable evidence whose latest independent success is too old | `refresh_due` |
 
 The current defaults in `src/learning_evidence/mastery.py` are:
 
@@ -24,7 +24,7 @@ The current defaults in `src/learning_evidence/mastery.py` are:
 - `min_spacing = 1 day`
 - `refresh_after = 30 days`
 
-These are **configurable software rules**, not scientifically validated universal thresholds for human learning. When more than two successes are required, each success counted toward durability must be at least `min_spacing` after the previous counted success. Invalid negative/zero threshold configurations are rejected where they would make the rule nonsensical.
+These are **configurable software rules**, not scientifically validated universal thresholds for human learning. When more than two successes are required, each success counted toward durability must be at least `min_spacing` after the previous counted success. Once durability exists, a later correct independent success refreshes the recency clock even if durability had already been established. Invalid negative/zero threshold configurations are rejected where they would make the rule nonsensical.
 
 ## Concrete example
 
