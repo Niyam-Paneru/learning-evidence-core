@@ -41,6 +41,6 @@
   <g font-family="Arial, sans-serif" font-size="13" fill="#475467">
     <text x="64" y="382"><tspan font-weight="700">Defaults:</tspan> 2 independent successes · minimum spacing 1 day · refresh after 30 days</text>
     <text x="64" y="407">Configurable software rules, not universal claims about how quickly people learn or forget.</text>
-    <text x="1136" y="407" text-anchor="end">Assisted project completion does not auto-promote mastery.</text>
+    <text x="64" y="431">Assisted project completion does not auto-promote mastery.</text>
   </g>
 </svg>
