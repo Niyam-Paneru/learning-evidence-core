@@ -81,6 +81,17 @@ class MasteryTests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "refresh_after"):
             mastery_for("pointers", attempts, refresh_after=timedelta(seconds=-1))
 
+    def test_later_independent_success_refreshes_durable_evidence(self):
+        attempts = [
+            Attempt("pointers", BASE, correct=True),
+            Attempt("pointers", BASE + timedelta(days=2), correct=True),
+            Attempt("pointers", BASE + timedelta(days=35), correct=True),
+        ]
+        self.assertEqual(
+            mastery_for("pointers", attempts, now=BASE + timedelta(days=40)),
+            Mastery.DURABLE,
+        )
+
     def test_old_mastery_becomes_refresh_due(self):
         attempts = [
             Attempt("pointers", BASE, correct=True),
