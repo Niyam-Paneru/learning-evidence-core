@@ -62,7 +62,7 @@ def mastery_for(
     if len(spaced_successes) < min_independent_successes:
         return Mastery.QUALIFIED
 
-    latest_qualifying_success = spaced_successes[-1].at
+    latest_qualifying_success = independent_successes[-1].at
     if now - latest_qualifying_success > refresh_after:
         return Mastery.REFRESH_DUE
 
