@@ -9,13 +9,22 @@ This public sample comes from my private Learning OS work. It shows how recorded
 ## Evidence: start with the attempts for one skill
 
 ```mermaid
-flowchart LR
-    A{"Any attempts?"} -- No --> U["<b>unseen</b>"]
+---
+config:
+  flowchart:
+    curve: linear
+    nodeSpacing: 28
+    rankSpacing: 42
+---
+flowchart TB
+    accTitle: Evidence: start with the attempts for one skill
+    accDescr: Decision flow for evidence: start with the attempts for one skill.
+    A{"Any attempts?"} -- No --> U["unseen"]
     A -- Yes --> S{"Independent success?"}
-    S -- No --> P["<b>practice</b>"]
-    S -- Yes --> Q["<b>Check durability</b><br/>Spacing + recency"]
-    classDef input fill:#e8e6df,stroke:#55534a,color:#20201d,stroke-width:2px;
-    classDef pass fill:#d2e5d8,stroke:#38734d,color:#183923,stroke-width:2px;
+    S -- No --> P["practice"]
+    S -- Yes --> Q["Check durability<br/>Spacing + recency"]
+    classDef input stroke-width:1.5px;
+    classDef pass stroke-width:2.5px;
     class A,S,U,P input;
     class Q pass;
 ```
@@ -27,15 +36,24 @@ Success must be correct and independent. Assisted attempts still count as practi
 The configured count and spacing determine durability. Once enough spaced successes exist, the latest correct independent success sets the refresh clock, including later successes that were not needed to establish durability.
 
 ```mermaid
-flowchart LR
-    A["<b>Independent successes</b>"] --> S{"Spaced enough?"}
-    S -- No --> Q["<b>qualified</b>"]
+---
+config:
+  flowchart:
+    curve: linear
+    nodeSpacing: 28
+    rankSpacing: 42
+---
+flowchart TB
+    accTitle: Durability: count spaced successes, then check recency
+    accDescr: Decision flow for durability: count spaced successes, then check recency.
+    A["Independent successes"] --> S{"Spaced enough?"}
+    S -- No --> Q["qualified"]
     S -- Yes --> R{"Recent enough?"}
-    R -- Yes --> D["<b>durable</b>"]
-    R -- No --> F["<b>refresh_due</b>"]
-    classDef input fill:#e8e6df,stroke:#55534a,color:#20201d,stroke-width:2px;
-    classDef pass fill:#d2e5d8,stroke:#38734d,color:#183923,stroke-width:2px;
-    classDef stop fill:#f4dadd,stroke:#b14253,color:#611c29,stroke-width:2px;
+    R -- Yes --> D["durable"]
+    R -- No --> F["refresh_due"]
+    classDef input stroke-width:1.5px;
+    classDef pass stroke-width:2.5px;
+    classDef stop stroke-width:2px,stroke-dasharray:5 3;
     class A,S,R,Q input;
     class D pass;
     class F stop;
