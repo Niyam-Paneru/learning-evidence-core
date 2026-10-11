@@ -9,3 +9,5 @@
 7. **Assisted project completion does not auto-promote prerequisites.**
 
 Progress is allowed to feel good without becoming fake certainty.
+
+8. **Raw evidence must be typed before counting.** String `"false"` is not the Boolean `False`; integer `1` is not a Boolean success; Boolean assistance flags are not numeric help levels. Malformed inputs are refused instead of silently changing mastery.
