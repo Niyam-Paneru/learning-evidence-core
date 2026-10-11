@@ -38,7 +38,14 @@ def mastery_for(
     )
 
     now = now or datetime.now(timezone.utc)
-    rows = sorted((attempt for attempt in attempts if attempt.skill == skill), key=lambda a: a.at)
+    if now.tzinfo is None or now.utcoffset() is None:
+        raise ValueError("now_must_be_timezone_aware")
+
+    # Historical state must not incorporate attempts that have not happened yet.
+    rows = sorted(
+        (attempt for attempt in attempts if attempt.skill == skill and attempt.at <= now),
+        key=lambda a: a.at,
+    )
 
     if not rows:
         return Mastery.UNSEEN

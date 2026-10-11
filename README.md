@@ -81,6 +81,8 @@ The defaults in `src/learning_evidence/mastery.py` are:
 
 These are **configurable software rules, not scientifically validated universal thresholds for human learning**. Counted successes must satisfy the configured spacing. Once durability exists, a later correct independent success refreshes the recency clock even if durability had already been established.
 
+The optional `now` argument is a point-in-time cutoff, not just a recency clock: future attempts are excluded, and an explicitly supplied query clock must be timezone-aware.
+
 Other enforced boundaries are deliberately boring:
 
 - evidence is isolated by skill;
