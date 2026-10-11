@@ -9,6 +9,9 @@ Correct attempts happen minutes apart. Response: require spacing before durable 
 ## Project completion inflates prerequisites
 A large project is completed with help and all underlying skills are marked mastered. Response: project evidence does not auto-promote every prerequisite.
 
+## Future attempts rewrite historical mastery
+A query for an earlier point in time sees attempts from later dates and may falsely mark the skill durable or recently refreshed. Response: require an aware query clock and consider only attempts whose timestamps are at or before that clock.
+
 ## Old mastery is treated as permanent
 Evidence ages without a retention check. Response: move to refresh-due.
 
