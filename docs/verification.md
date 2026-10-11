@@ -10,3 +10,7 @@ python -m compileall -q src
 The behavior suite checks the evidence-state journey, skill isolation, spacing, configurable thresholds, and the rule that a later correct independent success refreshes recency after durable evidence exists.
 
 CircleCI runs the same behavior suite plus lightweight public-proof file checks. A CI configuration being present is not evidence that a particular commit passed; use the current GitHub check status for that claim.
+
+`tests/test_input_validation.py` checks that malformed ingestion values
+(especially truthy strings, numeric boolean substitutes, and Boolean help levels)
+cannot become qualifying or project-promotion evidence.
