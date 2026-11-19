@@ -1,10 +1,17 @@
 # Learning Evidence Core
 
-A small deterministic Python module that keeps **assisted practice**, **independent evidence**, and **mastery state** separate.
+Finishing an exercise with step-by-step help is progress. It is not automatically proof you can do it alone. This Python module computes **practice, qualified, durable, and refresh-due** states from independent attempts, spacing, and recency.
 
-**Assisted practice does not get a fake moustache and pass as independent evidence.**
+The thresholds are configurable. A copied answer does not get to wear a fake moustache and call itself mastery.
 
-This public sample comes from my private Learning OS work. It shows how recorded evidence determines a skill's current state. I can adapt the rules and build the surrounding learning applications, practice workflows, and progress tracking.
+**Try it / check the behavior:**
+
+```powershell
+$env:PYTHONPATH = "src"
+python -m unittest discover -s tests
+```
+
+Software policy rules, not scientifically validated universal learning intervals. [Verification](docs/verification.md).
 
 ## Evidence: start with the attempts for one skill
 
