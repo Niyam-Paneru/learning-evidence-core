@@ -19,56 +19,25 @@ The default policy asks for two independent successes at least a day apart, then
 
 Later independent success can refresh the recency clock. Assistance on one skill can't mysteriously make a different skill mastered.
 
-## What the evidence actually earns
-
-First decide whether an attempt was independent evidence or just practice.
+## What counts as evidence
 
 ```mermaid
----
-config:
-  flowchart:
-    curve: linear
-    nodeSpacing: 28
-    rankSpacing: 42
----
 flowchart TB
-    accTitle: Evidence: start with the attempts for one skill
-    accDescr: Decision flow for evidence: start with the attempts for one skill.
-    A{"Any attempts?"} -- No --> U["unseen"]
-    A -- Yes --> S{"Independent success?"}
-    S -- No --> P["practice"]
-    S -- Yes --> Q["Check durability<br/>Spacing + recency"]
-    classDef input stroke-width:1.5px;
-    classDef pass stroke-width:2.5px;
-    class A,S,U,P input;
-    class Q pass;
+    A{"Any attempt?"} -- No --> U["Unseen"]
+    A -- Yes --> B{"Correct, on your own?"}
+    B -- No --> P["Practice"]
+    B -- Yes --> C{"Enough spaced successes?"}
+    C -- No --> Q["Qualified"]
+    C -- Yes --> D{"Recent independent success?"}
+    D -- Yes --> V["Durable"]
+    D -- No --> F["Refresh due"]
+    classDef evidence fill:#E9F5F0,stroke:#287F67,color:#1D5847;
+    classDef review fill:#F9EFE6,stroke:#A06B47,color:#674226;
+    class Q,V evidence;
+    class F review;
 ```
 
-Then decide if those independent successes are far enough apart, and recent enough, to count as durable.
-
-```mermaid
----
-config:
-  flowchart:
-    curve: linear
-    nodeSpacing: 28
-    rankSpacing: 42
----
-flowchart TB
-    accTitle: Durability: count spaced successes, then check recency
-    accDescr: Decision flow for durability: count spaced successes, then check recency.
-    A["Independent successes"] --> S{"Spaced enough?"}
-    S -- No --> Q["qualified"]
-    S -- Yes --> R{"Recent enough?"}
-    R -- Yes --> D["durable"]
-    R -- No --> F["refresh_due"]
-    classDef input stroke-width:1.5px;
-    classDef pass stroke-width:2.5px;
-    classDef stop stroke-width:2px,stroke-dasharray:5 3;
-    class A,S,R,Q input;
-    class D pass;
-    class F stop;
-```
+The configured thresholds decide *when* the states change. An assisted solution cannot skip straight to `durable` just because it happened to be correct.
 
 Useful files: [mastery rules](src/learning_evidence/mastery.py), [evidence classification](src/learning_evidence/evidence.py), [models](src/learning_evidence/models.py), and [tests](tests/).
 
