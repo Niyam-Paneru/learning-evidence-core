@@ -1,110 +1,31 @@
 # Learning Evidence Core
 
-Finishing an exercise with step-by-step help is progress. It is not automatically proof you can do it alone. This Python module computes **practice, qualified, durable, and refresh-due** states from independent attempts, spacing, and recency.
+If somebody walks me through an exercise and I finish it, have I learned it?
 
-The thresholds are configurable. A copied answer does not get to wear a fake moustache and call itself mastery.
+Maybe. But I definitely shouldn't get the same credit as finishing it alone.
 
-**Try it / check the behavior:**
+This Python module keeps those two kinds of evidence separate. It reads attempts for one skill and figures out whether the learner is at **practice**, **qualified**, **durable**, or **refresh due**. No attempt at all is `unseen`.
+
+## What counts?
+
+Imagine a learner gets a problem right:
+
+- With help: useful practice, **not** independent evidence.
+- Alone, once: `qualified`.
+- Alone, again after enough spacing: potentially `durable`.
+- Not independently revisited for long enough: `refresh_due`.
+
+The default policy asks for two independent successes at least a day apart, then checks a 30-day refresh window. These are **configurable software defaults**, not a secret scientific formula for the human brain. (I looked; no universally approved "learn Python in exactly 48 hours" constant exists in this code.)
+
+Later independent success can refresh the recency clock. Assistance on one skill can't mysteriously make a different skill mastered.
+
+## Run the checks
 
 ```powershell
 $env:PYTHONPATH = "src"
 python -m unittest discover -s tests
 ```
 
-Software policy rules, not scientifically validated universal learning intervals. [Verification](docs/verification.md).
+Useful files: [mastery rules](src/learning_evidence/mastery.py), [evidence classification](src/learning_evidence/evidence.py), [models](src/learning_evidence/models.py), and [tests](tests/).
 
-## Evidence: start with the attempts for one skill
-
-```mermaid
----
-config:
-  flowchart:
-    curve: linear
-    nodeSpacing: 28
-    rankSpacing: 42
----
-flowchart TB
-    accTitle: Evidence: start with the attempts for one skill
-    accDescr: Decision flow for evidence: start with the attempts for one skill.
-    A{"Any attempts?"} -- No --> U["unseen"]
-    A -- Yes --> S{"Independent success?"}
-    S -- No --> P["practice"]
-    S -- Yes --> Q["Check durability<br/>Spacing + recency"]
-    classDef input stroke-width:1.5px;
-    classDef pass stroke-width:2.5px;
-    class A,S,U,P input;
-    class Q pass;
-```
-
-Success must be correct and independent. Assisted attempts still count as practice, and evidence from another skill does not enter this calculation.
-
-## Durability: count spaced successes, then check recency
-
-The configured count and spacing determine durability. Once enough spaced successes exist, the latest correct independent success sets the refresh clock, including later successes that were not needed to establish durability.
-
-```mermaid
----
-config:
-  flowchart:
-    curve: linear
-    nodeSpacing: 28
-    rankSpacing: 42
----
-flowchart TB
-    accTitle: Durability: count spaced successes, then check recency
-    accDescr: Decision flow for durability: count spaced successes, then check recency.
-    A["Independent successes"] --> S{"Spaced enough?"}
-    S -- No --> Q["qualified"]
-    S -- Yes --> R{"Recent enough?"}
-    R -- Yes --> D["durable"]
-    R -- No --> F["refresh_due"]
-    classDef input stroke-width:1.5px;
-    classDef pass stroke-width:2.5px;
-    classDef stop stroke-width:2px,stroke-dasharray:5 3;
-    class A,S,R,Q input;
-    class D pass;
-    class F stop;
-```
-
-## State rules
-
-`mastery_for()` evaluates one skill at a time.
-
-| Evidence seen | State |
-|---|---|
-| No attempts | `unseen` |
-| Attempts, but no correct independent success | `practice` |
-| At least one correct independent success | `qualified` |
-| Enough counted independent successes with the configured spacing | `durable` |
-| Durable evidence whose latest independent success is too old | `refresh_due` |
-
-The defaults in `src/learning_evidence/mastery.py` are:
-
-| Setting | Default |
-|---|---:|
-| `min_independent_successes` | 2 |
-| `min_spacing` | 1 day |
-| `refresh_after` | 30 days |
-
-These are **configurable software rules, not scientifically validated universal thresholds for human learning**. Counted successes must satisfy the configured spacing. Once durability exists, a later correct independent success refreshes the recency clock even if durability had already been established.
-
-Other enforced boundaries are deliberately boring:
-
-- evidence is isolated by skill;
-- `help_level > 0` remains practice evidence;
-- assisted project completion does not auto-promote mastery;
-- timestamps must be timezone-aware;
-- nonsensical threshold values are rejected.
-
-## Where the behavior lives
-
-- [`src/learning_evidence/mastery.py`](src/learning_evidence/mastery.py) — state derivation, spacing, recency, and threshold validation
-- [`src/learning_evidence/models.py`](src/learning_evidence/models.py) — attempts and evidence/mastery enums
-- [`src/learning_evidence/evidence.py`](src/learning_evidence/evidence.py) — evidence classification and project-promotion boundary
-- [`tests/test_core.py`](tests/test_core.py) and [`tests/test_mastery.py`](tests/test_mastery.py) — the state journey, spacing, refresh, and configuration checks
-
-Verification commands and expected checks: [docs/verification.md](docs/verification.md).
-
-## Public boundary
-
-This repository is a public extraction of evidence/mastery rules from private Learning OS work. It intentionally excludes learner history, exercises, personal progress, UI state, recordings, and provider integrations. See [`PROVENANCE.md`](PROVENANCE.md) and [`SECURITY.md`](SECURITY.md) for those boundaries.
+This is the rule engine, not a learning app with lessons, login, or saved student histories. The private Learning OS project contains broader work; none of that is silently bundled here. [Verification](docs/verification.md) · [provenance](PROVENANCE.md).
