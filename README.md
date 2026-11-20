@@ -6,7 +6,7 @@ Maybe. But giving that attempt the same score as solving it alone would make my 
 
 This Python module tracks **assisted practice** separately from **independent evidence** for one skill at a time.
 
-## An answer isn't an achievement badge
+## What each attempt proves
 
 | What happened | What the module can conclude |
 | --- | --- |
@@ -18,7 +18,7 @@ This Python module tracks **assisted practice** separately from **independent ev
 
 The default policy requires **two independent successes at least one day apart** and checks a **30-day refresh window**. Those are configurable **software defaults**, not a claim about how many hours human brains need to master Python.
 
-An assisted solution can be useful practice, but it can't take the express elevator to durable mastery. Nor does proving one skill magically unlock evidence for another.
+An assisted solution can be useful practice, but it can't count as independent mastery evidence. Nor does proving one skill magically unlock evidence for another.
 
 Code: [mastery rules](src/learning_evidence/mastery.py), [attempt evidence](src/learning_evidence/evidence.py), [models](src/learning_evidence/models.py), and [tests](tests/). The specific thresholds and behavior checks are in [verification](docs/verification.md).
 
