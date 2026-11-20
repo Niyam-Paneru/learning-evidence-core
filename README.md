@@ -1,44 +1,29 @@
 # Learning Evidence Core
 
-If somebody walks me through an exercise and I finish it, have I learned it?
+If I finish a programming problem while someone tells me what to type, did I learn it?
 
-Maybe. But I definitely shouldn't get the same credit as finishing it alone.
+Maybe. But giving that attempt the same score as solving it alone would make my tutor an exceptionally successful student.
 
-This Python module keeps those two kinds of evidence separate. It reads attempts for one skill and figures out whether the learner is at **practice**, **qualified**, **durable**, or **refresh due**. No attempt at all is `unseen`.
+This Python module tracks **assisted practice** separately from **independent evidence** for one skill at a time.
 
-## What counts?
+## An answer isn't an achievement badge
 
-Imagine a learner gets a problem right:
+| What happened | What the module can conclude |
+| --- | --- |
+| No attempts | unseen |
+| An attempt was helped or not independently correct | practice evidence |
+| Correct, independently, once | qualified |
+| Enough independent successes separated in time | potentially durable |
+| No recent independent refresh after the configured window | refresh_due |
 
-- With help: useful practice, **not** independent evidence.
-- Alone, once: `qualified`.
-- Alone, again after enough spacing: potentially `durable`.
-- Not independently revisited for long enough: `refresh_due`.
+The default policy requires **two independent successes at least one day apart** and checks a **30-day refresh window**. Those are configurable **software defaults**, not a claim about how many hours human brains need to master Python.
 
-The default policy asks for two independent successes at least a day apart, then checks a 30-day refresh window. These are **configurable software defaults**, not a secret scientific formula for the human brain. (I looked; no universally approved "learn Python in exactly 48 hours" constant exists in this code.)
+An assisted solution can be useful practice, but it can't take the express elevator to durable mastery. Nor does proving one skill magically unlock evidence for another.
 
-Later independent success can refresh the recency clock. Assistance on one skill can't mysteriously make a different skill mastered.
+Code: [mastery rules](src/learning_evidence/mastery.py), [attempt evidence](src/learning_evidence/evidence.py), [models](src/learning_evidence/models.py), and [tests](tests/). The specific thresholds and behavior checks are in [verification](docs/verification.md).
 
-## What counts as evidence
+## Not a whole learning platform
 
-```mermaid
-flowchart TB
-    A{"Any attempt?"} -- No --> U["Unseen"]
-    A -- Yes --> B{"Correct, on your own?"}
-    B -- No --> P["Practice"]
-    B -- Yes --> C{"Enough spaced successes?"}
-    C -- No --> Q["Qualified"]
-    C -- Yes --> D{"Recent independent success?"}
-    D -- Yes --> V["Durable"]
-    D -- No --> F["Refresh due"]
-    classDef evidence fill:#E9F5F0,stroke:#287F67,color:#1D5847;
-    classDef review fill:#F9EFE6,stroke:#A06B47,color:#674226;
-    class Q,V evidence;
-    class F review;
-```
+No hosted lessons, login, student history service, or private Learning OS application is included. This is the **evidence rule engine**.
 
-The configured thresholds decide *when* the states change. An assisted solution cannot skip straight to `durable` just because it happened to be correct.
-
-Useful files: [mastery rules](src/learning_evidence/mastery.py), [evidence classification](src/learning_evidence/evidence.py), [models](src/learning_evidence/models.py), and [tests](tests/).
-
-This is the rule engine, not a learning app with lessons, login, or saved student histories. The private Learning OS project contains broader work; none of that is silently bundled here. [Verification](docs/verification.md) · [provenance](PROVENANCE.md).
+If it says “refresh due,” that's not an insult. It's just a better study plan than endlessly replaying the exercise you already remember. [Provenance](PROVENANCE.md).
