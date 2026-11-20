@@ -1,10 +1,10 @@
 # Learning Evidence Core
 
-If someone tells me exactly what to type and I get a Python exercise right, I'd love to claim mastery. The person who actually solved it might have opinions.
+If I solve a coding exercise with somebody telling me what to type, and it prints the right answer, I've demonstrated at least one skill: typing.
 
-So I made a learning-evidence module that distinguishes **practice with help** from **doing it independently**. Otherwise you could become a senior engineer by watching someone else type very enthusiastically.
+I wanted a learning log that doesn't confuse getting help with getting it. This Python module separates **assisted practice** from independently correct attempts, then checks whether the evidence is recent and repeated.
 
-## How much of that gold star is yours?
+## How much of that solution was mine?
 
 | What happened | What the module can conclude |
 | --- | --- |
