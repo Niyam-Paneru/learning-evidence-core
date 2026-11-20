@@ -1,12 +1,10 @@
 # Learning Evidence Core
 
-If I finish a programming problem while someone tells me what to type, did I learn it?
+Suppose I finish a Python exercise while someone tells me exactly what to type. Who passed the exercise — me or the person whispering the answers?
 
-Maybe. But giving that attempt the same score as solving it alone would make my tutor an exceptionally successful student.
+I didn't want a learning tracker that gave us both the same gold star. This Python module records **assisted practice** separately from **independent evidence** for one skill at a time.
 
-This Python module tracks **assisted practice** separately from **independent evidence** for one skill at a time.
-
-## What each attempt proves
+## Who actually solved it?
 
 | What happened | What the module can conclude |
 | --- | --- |
@@ -26,4 +24,4 @@ Code: [mastery rules](src/learning_evidence/mastery.py), [attempt evidence](src/
 
 No hosted lessons, login, student history service, or private Learning OS application is included. This is the **evidence rule engine**.
 
-If it says “refresh due,” that's not an insult. It's just a better study plan than endlessly replaying the exercise you already remember. [Provenance](PROVENANCE.md).
+“Refresh due” is a reminder to check the skill again, not an invitation to repeat the easiest example until it files a complaint. [Provenance](PROVENANCE.md).
