@@ -1,10 +1,10 @@
 # Learning Evidence Core
 
-Suppose I finish a Python exercise while someone tells me exactly what to type. Who passed the exercise — me or the person whispering the answers?
+If someone tells me exactly what to type and I get a Python exercise right, I'd love to claim mastery. The person who actually solved it might have opinions.
 
-I didn't want a learning tracker that gave us both the same gold star. This Python module records **assisted practice** separately from **independent evidence** for one skill at a time.
+So I made a learning-evidence module that distinguishes **practice with help** from **doing it independently**. Otherwise you could become a senior engineer by watching someone else type very enthusiastically.
 
-## Who actually solved it?
+## How much of that gold star is yours?
 
 | What happened | What the module can conclude |
 | --- | --- |
@@ -24,4 +24,4 @@ Code: [mastery rules](src/learning_evidence/mastery.py), [attempt evidence](src/
 
 No hosted lessons, login, student history service, or private Learning OS application is included. This is the **evidence rule engine**.
 
-“Refresh due” is a reminder to check the skill again, not an invitation to repeat the easiest example until it files a complaint. [Provenance](PROVENANCE.md).
+When a skill goes stale, it gets `refresh_due`. Not a punishment — just the system politely asking whether the knowledge still lives in your head or only in your notes. [Provenance](PROVENANCE.md).
