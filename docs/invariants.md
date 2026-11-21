@@ -9,3 +9,6 @@
 7. **Assisted project completion does not auto-promote prerequisites.**
 
 Progress is allowed to feel good without becoming fake certainty.
+
+8. **Raw evidence must be typed before counting.** String `"false"` is not Boolean `False`; numeric Boolean substitutes and Boolean help levels are rejected.
+9. **Historical state only uses evidence at or before the query instant.** Compare and measure in UTC, including across daylight-saving transitions.

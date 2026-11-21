@@ -20,6 +20,8 @@ An assisted solution can be useful practice, but it can't count as independent m
 
 Code: [mastery rules](src/learning_evidence/mastery.py), [attempt evidence](src/learning_evidence/evidence.py), [models](src/learning_evidence/models.py), and [tests](tests/). The specific thresholds and behavior checks are in [verification](docs/verification.md).
 
+Historical queries only count attempts at or before the supplied timezone-aware `now`. Spacing and recency use elapsed UTC time, so changing a clock for daylight saving cannot change mastery. Ingestion requires real Boolean success and project flags, a non-negative integer help level, and a timezone-aware attempt timestamp.
+
 ## Not a whole learning platform
 
 No hosted lessons, login, student history service, or private Learning OS application is included. This is the **evidence rule engine**.

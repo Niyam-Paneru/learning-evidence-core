@@ -27,11 +27,17 @@ class Attempt:
     project_completion: bool = False
 
     def __post_init__(self) -> None:
-        if not self.skill.strip():
+        # Python dataclass annotations are not runtime validation. In particular,
+        # a nonempty "false" string is truthy and must never count as a success.
+        if not isinstance(self.skill, str) or not self.skill.strip():
             raise ValueError("skill_required")
-        if not isinstance(self.help_level, int) or self.help_level < 0:
+        if type(self.correct) is not bool:
+            raise ValueError("correct_must_be_boolean")
+        if type(self.project_completion) is not bool:
+            raise ValueError("project_completion_must_be_boolean")
+        if type(self.help_level) is not int or self.help_level < 0:
             raise ValueError("help_level_must_be_non_negative_integer")
-        if self.at.tzinfo is None or self.at.utcoffset() is None:
+        if not isinstance(self.at, datetime) or self.at.tzinfo is None or self.at.utcoffset() is None:
             raise ValueError("attempt_time_must_be_timezone_aware")
 
     def kind(self) -> EvidenceKind:
