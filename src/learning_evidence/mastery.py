@@ -37,39 +37,46 @@ def mastery_for(
         refresh_after=refresh_after,
     )
 
-    now = now or datetime.now(timezone.utc)
-    if now.tzinfo is None or now.utcoffset() is None:
+    if now is None:
+        now = datetime.now(timezone.utc)
+    if not isinstance(now, datetime) or now.tzinfo is None or now.utcoffset() is None:
         raise ValueError("now_must_be_timezone_aware")
+    now = now.astimezone(timezone.utc)
 
-    # Historical state must not incorporate attempts that have not happened yet.
-    rows = sorted(
-        (attempt for attempt in attempts if attempt.skill == skill and attempt.at <= now),
-        key=lambda a: a.at,
-    )
+    # Normalize before comparing: same-zone datetime arithmetic can use wall
+    # time instead of elapsed time across daylight-saving transitions.
+    rows: list[tuple[datetime, Attempt]] = []
+    for attempt in attempts:
+        if attempt.skill != skill:
+            continue
+        instant = attempt.at.astimezone(timezone.utc)
+        if instant <= now:
+            rows.append((instant, attempt))
+    rows.sort(key=lambda row: row[0])
 
     if not rows:
         return Mastery.UNSEEN
 
     independent_successes = [
-        attempt
-        for attempt in rows
+        instant
+        for instant, attempt in rows
         if attempt.correct and attempt.kind() is EvidenceKind.QUALIFYING
     ]
 
     if not independent_successes:
         return Mastery.PRACTICE
 
-    spaced_successes: list[Attempt] = []
-    for attempt in independent_successes:
-        if not spaced_successes or attempt.at - spaced_successes[-1].at >= min_spacing:
-            spaced_successes.append(attempt)
+    spaced_successes: list[datetime] = []
+    for instant in independent_successes:
+        if not spaced_successes or instant - spaced_successes[-1] >= min_spacing:
+            spaced_successes.append(instant)
             if len(spaced_successes) >= min_independent_successes:
                 break
 
     if len(spaced_successes) < min_independent_successes:
         return Mastery.QUALIFIED
 
-    latest_qualifying_success = independent_successes[-1].at
+    latest_qualifying_success = independent_successes[-1]
     if now - latest_qualifying_success > refresh_after:
         return Mastery.REFRESH_DUE
 

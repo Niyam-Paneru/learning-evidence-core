@@ -1,105 +1,29 @@
 # Learning Evidence Core
 
-A small deterministic Python module that keeps **assisted practice**, **independent evidence**, and **mastery state** separate.
+If I solve a coding exercise with somebody telling me what to type, and it prints the right answer, I've demonstrated at least one skill: typing.
 
-**Assisted practice does not get a fake moustache and pass as independent evidence.**
+I wanted a learning log that doesn't confuse getting help with getting it. This Python module separates **assisted practice** from independently correct attempts, then checks whether the evidence is recent and repeated.
 
-This public sample comes from my private Learning OS work. It shows how recorded evidence determines a skill's current state. I can adapt the rules and build the surrounding learning applications, practice workflows, and progress tracking.
+## How much of that solution was mine?
 
-## Evidence: start with the attempts for one skill
+| What happened | What the module can conclude |
+| --- | --- |
+| No attempts | unseen |
+| An attempt was helped or not independently correct | practice evidence |
+| Correct, independently, once | qualified |
+| Enough independent successes separated in time | potentially durable |
+| No recent independent refresh after the configured window | refresh_due |
 
-```mermaid
----
-config:
-  flowchart:
-    curve: linear
-    nodeSpacing: 28
-    rankSpacing: 42
----
-flowchart TB
-    accTitle: Evidence: start with the attempts for one skill
-    accDescr: Decision flow for evidence: start with the attempts for one skill.
-    A{"Any attempts?"} -- No --> U["unseen"]
-    A -- Yes --> S{"Independent success?"}
-    S -- No --> P["practice"]
-    S -- Yes --> Q["Check durability<br/>Spacing + recency"]
-    classDef input stroke-width:1.5px;
-    classDef pass stroke-width:2.5px;
-    class A,S,U,P input;
-    class Q pass;
-```
+The default policy requires **two independent successes at least one day apart** and checks a **30-day refresh window**. Those are configurable **software defaults**, not a claim about how many hours human brains need to master Python.
 
-Success must be correct and independent. Assisted attempts still count as practice, and evidence from another skill does not enter this calculation.
+An assisted solution can be useful practice, but it can't count as independent mastery evidence. Nor does proving one skill magically unlock evidence for another.
 
-## Durability: count spaced successes, then check recency
+Code: [mastery rules](src/learning_evidence/mastery.py), [attempt evidence](src/learning_evidence/evidence.py), [models](src/learning_evidence/models.py), and [tests](tests/). The specific thresholds and behavior checks are in [verification](docs/verification.md).
 
-The configured count and spacing determine durability. Once enough spaced successes exist, the latest correct independent success sets the refresh clock, including later successes that were not needed to establish durability.
+Historical queries only count attempts at or before the supplied timezone-aware `now`. Spacing and recency use elapsed UTC time, so changing a clock for daylight saving cannot change mastery. Ingestion requires real Boolean success and project flags, a non-negative integer help level, and a timezone-aware attempt timestamp.
 
-```mermaid
----
-config:
-  flowchart:
-    curve: linear
-    nodeSpacing: 28
-    rankSpacing: 42
----
-flowchart TB
-    accTitle: Durability: count spaced successes, then check recency
-    accDescr: Decision flow for durability: count spaced successes, then check recency.
-    A["Independent successes"] --> S{"Spaced enough?"}
-    S -- No --> Q["qualified"]
-    S -- Yes --> R{"Recent enough?"}
-    R -- Yes --> D["durable"]
-    R -- No --> F["refresh_due"]
-    classDef input stroke-width:1.5px;
-    classDef pass stroke-width:2.5px;
-    classDef stop stroke-width:2px,stroke-dasharray:5 3;
-    class A,S,R,Q input;
-    class D pass;
-    class F stop;
-```
+## Not a whole learning platform
 
-## State rules
+No hosted lessons, login, student history service, or private Learning OS application is included. This is the **evidence rule engine**.
 
-`mastery_for()` evaluates one skill at a time.
-
-| Evidence seen | State |
-|---|---|
-| No attempts | `unseen` |
-| Attempts, but no correct independent success | `practice` |
-| At least one correct independent success | `qualified` |
-| Enough counted independent successes with the configured spacing | `durable` |
-| Durable evidence whose latest independent success is too old | `refresh_due` |
-
-The defaults in `src/learning_evidence/mastery.py` are:
-
-| Setting | Default |
-|---|---:|
-| `min_independent_successes` | 2 |
-| `min_spacing` | 1 day |
-| `refresh_after` | 30 days |
-
-These are **configurable software rules, not scientifically validated universal thresholds for human learning**. Counted successes must satisfy the configured spacing. Once durability exists, a later correct independent success refreshes the recency clock even if durability had already been established.
-
-The optional `now` argument is a point-in-time cutoff, not just a recency clock: future attempts are excluded, and an explicitly supplied query clock must be timezone-aware.
-
-Other enforced boundaries are deliberately boring:
-
-- evidence is isolated by skill;
-- `help_level > 0` remains practice evidence;
-- assisted project completion does not auto-promote mastery;
-- timestamps must be timezone-aware;
-- nonsensical threshold values are rejected.
-
-## Where the behavior lives
-
-- [`src/learning_evidence/mastery.py`](src/learning_evidence/mastery.py) — state derivation, spacing, recency, and threshold validation
-- [`src/learning_evidence/models.py`](src/learning_evidence/models.py) — attempts and evidence/mastery enums
-- [`src/learning_evidence/evidence.py`](src/learning_evidence/evidence.py) — evidence classification and project-promotion boundary
-- [`tests/test_core.py`](tests/test_core.py) and [`tests/test_mastery.py`](tests/test_mastery.py) — the state journey, spacing, refresh, and configuration checks
-
-Verification commands and expected checks: [docs/verification.md](docs/verification.md).
-
-## Public boundary
-
-This repository is a public extraction of evidence/mastery rules from private Learning OS work. It intentionally excludes learner history, exercises, personal progress, UI state, recordings, and provider integrations. See [`PROVENANCE.md`](PROVENANCE.md) and [`SECURITY.md`](SECURITY.md) for those boundaries.
+When a skill goes stale, it gets `refresh_due`. Not a punishment — just the system politely asking whether the knowledge still lives in your head or only in your notes. [Provenance](PROVENANCE.md).
